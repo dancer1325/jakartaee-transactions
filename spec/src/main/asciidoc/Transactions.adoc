@@ -3,30 +3,24 @@
 
 == Introduction
 
-This document describes Jakarta
-Transactions. Jakarta Transactions specifies local Java interfaces between a
-transaction manager and the parties involved in a distributed
-transaction system: the application, the resource manager, and the
-application server.
-
-The Jakarta Transactions package consists of two parts:
-
-* A high-level application interface that
-allows a transactional application to demarcate transaction boundaries
-* A high-level transaction manager interface
-that allows an application server to control transaction boundary
-demarcation for an application being managed by the application server
-
-****
-Note – The Jakarta Transactions interfaces are presented as high-level from the transaction
-manager’s perspective. In contrast, a low-level API for the transaction manager
-consists of interfaces that are used to implement the transaction manager. For
-example, the Java mapping of the OTS are low-level interfaces used internally by
-a transaction manager.
-****
+* Jakarta Transactions
+    ** == 💡local Java interfaces BETWEEN 💡
+        *** transaction manager -- & -- parties involved | distributed transaction system (application, the resource manager, application server)
+    ** ==
+        *** high-level application interface /
+            **** allows
+                ***** define the transactional application's boundaries
+            **** uses
+                ***** applications developers
+        *** high-level transaction manager interface /
+            **** allows
+                ***** an application server can control the transaction boundary
+            **** uses
+                ***** server application developers
 
 === Background
 
+* TODO:
 Distributed transaction services in
 Enterprise Java middleware involves five players: the transaction
 manager, the application server, the resource manager, the application
@@ -1013,80 +1007,39 @@ significantly enhanced by the addition of the `getResource` and
 [#transactional-annotation]
 === Transactional Annotation
 
-The `jakarta.transaction.Transactional`
-annotation provides the application the ability to declaratively control
-transaction boundaries on Jakarta Context Dependency Injection managed beans, as well as classes defined
-as managed beans by the Jakarta EE specification, at both the class and
-method level where method level annotations override those at the class
-level. See the "`__Jakarta Enterprise Beans 4.0 specification__`" for restrictions on the use of
-`@Transactional` with Jakarta Enterprise Beans resources. This support is provided via an
-implementation of Jakarta Context Dependency Injection interceptors that conduct the necessary
-suspending, resuming, etc. The `Transactional` interceptor interposes on
-business method invocations only and not on lifecycle events.
+* `jakarta.transaction.Transactional` annotation
+    ** enables
+        *** 💡the application can DECLARATIVELY control transaction boundaries | Jakarta CDI managed beans💡 |
+            **** class
+            **** method
+                ***** HIGHER PRIORITY
+    ** https://github.com/dancer1325/jakartaee-enterprise-beans/blob/master/spec/src/main/asciidoc/core/SupportForTransactions.adoc[Jakarta Enterprise Beans specification's support transactions]
+        *** -- via -- implementation of Jakarta CDI interceptors /
+            **** interposes |
+                ***** business method invocations ONLY
+    ** 's arguments
+        *** `TxType` element
+
+
+
 Lifecycle methods are invoked in an unspecified transaction context. If
 an attempt is made to call any method of the `UserTransaction` interface
 from within the scope of a bean or method annotated with
 `@Transactional` and a `Transactional.TxType` other than `NOT_SUPPORTED`
-or `NEVER`, an `IllegalStateException` must be thrown. The use of the
-`UserTransaction` is allowed within life cycle events. The use of the
+or `NEVER`, an `IllegalStateException` must be thrown
+
+The use of the `UserTransaction` is allowed within life cycle events
+
+The use of the
 `TransactionSynchronizationRegistry` is allowed regardless of any
-`@Transactional` annotation. The `Transactional` interceptors must have a
-priority of `Interceptor.Priority.PLATFORM_BEFORE+200`. Refer to the
+`@Transactional` annotation
+
+The `Transactional` interceptors must have a
+priority of `Interceptor.Priority.PLATFORM_BEFORE+200`
+
+Refer to the
 "`__Interceptors specification__`" for more details.
 
-The `TxType` element of the annotation
-indicates whether a bean method is to be executed within a transaction
-context where the values provide the following corresponding behavior
-and `TxType.REQUIRED` is the default:
-
-* `TxType.REQUIRED`: If called outside a
-transaction context, the interceptor must begin a new Jakarta Transactions transaction,
-the managed bean method execution must then continue inside this
-transaction context, and the transaction must be completed by the
-interceptor. +
-If called inside a transaction context, the
-managed bean method execution must then continue inside this transaction
-context.
-
-* `TxType.REQUIRES_NEW`: If called outside
-a transaction context, the interceptor must begin a new Jakarta Transactions transaction,
-the managed bean method execution must then continue inside this
-transaction context, and the transaction must be completed by the
-interceptor. +
-If called inside a transaction context, the
-current transaction context must be suspended, a new Jakarta Transactions transaction
-will begin, the managed bean method execution must then continue inside
-this transaction context, the transaction must be completed, and the
-previously suspended transaction must be resumed.
-
-* `TxType.MANDATORY`: If called outside a
-transaction context, a `TransactionalException` with a nested
-`TransactionRequiredException` must be thrown. +
-If called inside a transaction context,
-managed bean method execution will then continue under that context.
-
-* `TxType.SUPPORTS`: If called outside a
-transaction context, managed bean method execution must then continue
-outside a transaction context. +
-If called inside a transaction context, the
-managed bean method execution must then continue inside this transaction
-context.
-
-* `TxType.NOT_SUPPORTED`: If called outside
-a transaction context, managed bean method execution must then continue
-outside a transaction context. +
-If called inside a transaction context, the
-current transaction context must be suspended, the managed bean method
-execution must then continue outside a transaction context, and the
-previously suspended transaction must be resumed by the interceptor that
-suspended it after the method execution has completed.
-
-* `TxType.NEVER`: If called outside a
-transaction context, managed bean method execution must then continue
-outside a transaction context. +
-If called inside a transaction context, a
-`TransactionalException` with a nested `InvalidTransactionException`
-must be thrown
 
 By default checked exceptions do not result
 in the transactional interceptor marking the transaction for rollback

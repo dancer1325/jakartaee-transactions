@@ -1,5 +1,18 @@
 # Jakarta Transactions
-Jakarta Transactions enables distributed transactions to be done across multiple X/Open XA resources in a Java environment.
 
-This standalone release of Jakarta Transactions, uses a [Java Platform Module System](http://openjdk.java.net/projects/jigsaw/spec/)
-"automatic" module name of `jakarta.transaction`.  A future version will include full module metadata. Moreover `javax.transaction.xa` package is now owned by Java SE.
+* Jakarta Transactions
+  * enables
+    * 👀make distributed transactions ACROSS MULTIPLE X/Open XA resources | Java environment👀
+
+* distributed transactions
+  * == operations | MULTIPLE resources (databases, queues, ...)
+
+* [X/Open XA](https://pubs.opengroup.org/onlinepubs/009680699/toc.pdf)
+  * == distribute transactions specifications
+    * == interfaceS
+
+* `javax.transaction.xa` package
+  * | CURRENTLY,
+    * owned by Java SE
+
+* [documentation](spec/src/main/asciidoc/transactions-spec.adoc)
